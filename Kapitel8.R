@@ -1,4 +1,5 @@
 library(lattice)
+library(MASS)
 
 #Aufgabe 2
 n= 500
@@ -46,6 +47,7 @@ barchart(Class~Freq|Sex+Age, data = df, groups = Survived,
          scales = list(x="free"))
 
 #b)
+
 library(mlmRev)
 library(lme4)
 library(Matrix)
