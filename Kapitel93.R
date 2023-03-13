@@ -29,12 +29,12 @@ y.hat = X%*%optim.hills$par
 
 
 #residuals stats
-residuals.hills = (hills$time - optim.hills$par[1] - optim.hills$par[2]*hills$dist - optim.hills$par[3]*hills$climb)^2
+residuals.hills = (hills$time - optim.hills$par[1] - optim.hills$par[2]*hills$dist - optim.hills$par[3]*hills$climb)
 summary(residuals.hills)
 
 #Coefficients matrix
 #Std. Error
-Fehlervarianz = 1/(length(hills$dist)-3)*sum(residuals.hills)
+Fehlervarianz = 1/(length(hills$dist)-3)*sum(residuals.hills^2)
 
 se.beta0 = sqrt(Fehlervarianz*solve(t(X)%*%X)[1,1])
 se.beta1 = sqrt(Fehlervarianz*solve(t(X)%*%X)[2,2])
@@ -60,14 +60,14 @@ residual.std.error = sqrt(Fehlervarianz)
 print(paste("Residual standard error: ", residual.std.error, "on ", length(hills$dist)-3, "degrees of freedom"))
 
 # multiple R^2
-R2 = 1- sum(residuals.hills)/sum((hills$time - mean(hills$time))^2)
+R2 = 1- sum(residuals.hills^2)/sum((hills$time - mean(hills$time))^2)
 
 # adjusted R^2
 R2.adjusted = 1-(length(hills$dist)-1)/(length(hills$dist)-3)*(1-R2)
 
 
 # F statistic
-F = (sum((y.hat-mean(hills$time))^2)*(length(hills$dist)-3))/((3-1)*sum(residuals.hills))
+F = (sum((y.hat-mean(hills$time))^2)*(length(hills$dist)-3))/((3-1)*sum(residuals.hills^2))
 #DF = c(3-1,length(hills$dist)-3)
 F.p.value = pf(F, df1 = 3-1, df2 = length(hills$dist)-3, lower.tail = FALSE)
 
@@ -117,3 +117,39 @@ radius.präd = qt(0.95,df = length(df.study$Lernzeit)-2)*
 
 lwr.bound.präd = y.30.hat-radius.präd
 upr.bound.präd = y.30.hat+radius.präd
+
+
+
+
+
+#Aufgabe 2
+#a)
+data = read.table("Datensaetze/strasse.txt", header = TRUE)
+plot(data$verkehr,data$blei)
+
+#b)
+fit.strasse = lm(blei~verkehr, data = data)
+summary(fit.strasse)
+plot(data$verkehr,data$blei)
+abline(fit.strasse, col = "red")
+
+
+#c)
+summary(fit.strasse)
+#beidseitiger Test
+#Pr(>|t|) <0.01 -> verkehr ist zu 1% (5%) Niveau signifikant
+
+#einseitiger Test
+t.beta1 = 9.798
+p.beta1 = pt(-abs(t.beta1), df = length(data$verkehr)-2)
+#Pr(>t) <0.01 -> verkehr ist zu 1% (5%) Niveau signifikant
+
+#d)
+# beidseitiger Test
+# Pr(>|t|) >0.05 -> Intercept kann auch gut 0 sein. p =0.863
+# Bedeutung: Baume, die keinen Verkehr haben, haben auch kein Blei
+
+#e)
+
+
+
