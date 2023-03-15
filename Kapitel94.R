@@ -164,3 +164,12 @@ sigmas
 #v)
 cooks.distance(fit.soft)
 Cook.D
+
+
+
+
+#visualize data
+scale = colorRampPalette(c("cyan", "deeppink3"), space = "rgb")(100)
+log.y = log(data$y)
+colors = scale[(log.y-min(log.y))/(max(log.y)-min(log.y))*100]
+plot(data$x1,data$x2,col = colors, pch = 16)
