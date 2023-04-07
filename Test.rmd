@@ -1,30 +1,56 @@
 ---
-title: "R Notebook"
-output: html_document
-runtime: shin
+title: "Stochastische Ausarbeitung"
+author: "Bela"
+date: "10.04.2023"
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: yes
+    toc: true
 ---
 
-```{r echo = FALSE}
-# Define UI for the application ----
-ui <- fluidPage(
+# Einleitung
+Viel Spaß mit meiner Ausarbeitung :).
 
-  titlePanel("Hello!"),
+# Aufagabe 1
+## $\chi^2$-Anpassungstest
 
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
+In der Multinomialverteilung haben wir $4$ Kategorien, welche jeweils Binomial verteilt sind. 
+Für große $n$ ist die Binomialverteilung normalverteilt mit  $\mu = n \cdot p$  und  $\sigma = \sqrt{n \cdot p \cdot (1-p)}$.
+Sei $a_1, a_2, a_3, a_4$ die Anzahl der Beobachtungen in den Kategorien. Damit ist $\dfrac{a_j-n \cdot p_j}{\sqrt{n \cdot p_j \cdot (1-p_j)}}\sim N(0,1)$.
+Also ist $\dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim (N(0,1))^2$  
+Damit ist die Summe $\sum_{j=1}^4 \dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim \chi^2_3$.  
+Da die p-Werte der $\chi^2$-Verteilung bekannt sind, kann so ein einfacher Hypothesentest durchgeführt werden:
+  
+$$\begin{aligned}H_0: p_1 = \frac18, p_2 = \frac14, p_3 = \frac12, p_4 = \frac18  \\
+H_1: Nicht alle p_j haben werte wie H_0\end{aligned}$$
 
-    # Sidebar panel for inputs ----
-    sidebarPanel(
+Simulieren wir nun den Versuch:
+  
+  ```{r}
+  set.seed(123)
+  simulateAnpassungstest <- function(){
+    n <- 1000
+    p <- c(1/8, 1/4, 1/2, 1/8)
+    a <- rmultinom(1, n, p)
+    sum((a - n*p)^2/(n*p))
+  }
+  ```
+  
+  ```{r}
+  results <- c()
+  for (i in 1:300){
+    results =c(results ,simulateAnpassungstest())
+  }
 
-    ),
+  ```
+  
+  ```{r}
+  hist(results, freq=FALSE, main = "Histogramm der Chi2 Werte", xlab = "Chi2-Wert", ylab = "relative Häufigkeit")
+  curve(dchisq(x, 3), add = TRUE, col = "red")
+  ```
 
-    # Main panel for outputs ----
-    mainPanel(
-    )
-  )
-)
-# Define server logic  ----
-server <- function(input, output) {
-}
-shinyApp(ui, server)
-```
+## $t-$Test mit unbekannter Varianz
+
+
