@@ -52,5 +52,156 @@ Simulieren wir nun den Versuch:
   ```
 
 ## $t-$Test mit unbekannter Varianz
+Beim zweiseitigen $t-$Test mit unbekannter Varianz wird die Nullhypothese $H_0: \mu = \mu_0$ gegen die Alternative $H_1: \mu \neq \mu_0$ getestet.
+Als Teststatistik wird $\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ verwendet.  
+Herleitung:  
+Seien $X_1, X_2, \dots, X_n\sim N(\mu, \sigma^2)$ unabhängig und identisch verteilt.  
+Das arithmetische Mittel $\bar X_n$ ist normalverteilt mit $\mu = \mu$ und $\sigma = \dfrac{\sigma}{\sqrt{n}}$.  
+Bei bekannter Varianz wäre $\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)$.
+Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also ist $\sqrt{n}\dfrac{\bar X_n-\mu_0}{S_n}\sim t_{n-1}$.(T-Verteilung folgt aus Störung durch die Varianzschätzung)
+
+Das heißt für den Test müssen wir nur die Teststatistik $T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ berechnen und anschließend deren $p$-Wert bestimmen:
+  
+Test:
+```{r}
+set.seed(123)
+mu0 <- 2
+sigma <- 4
+data <- rnorm(1000, mu0, sigma)
+alpha <- 0.05
+
+dataVar <- var(data)
+dataMean <- mean(data)
+
+T <- sqrt(length(data))*(dataMean-mu0)/sqrt(dataVar)
+
+#Teststatistik
+print(paste("T = ", T))
+
+#p-Wert von T
+print(paste("p-Wert von T = ", pt(T, length(data)-1, lower.tail = FALSE)))
+
+#Testresultat
+if (pt(T, length(data)-1, lower.tail = FALSE) > 1-alpha){
+  print("Nullhypothese wird verworfen")
+} else {
+  print("Nullhypothese wird nicht verworfen")
+}
+```
+
+Verteilung der Teststatistik:
+```{r}
+set.seed(123)
+Tdata = c()
+
+for (i in 1:300){
+  data <- rnorm(1000, mu0, sigma)
+  mu0 <- 2
+  alpha <- 0.05
+
+  T <- sqrt(length(data))*(mean(data)-mu0)/sqrt(var(data))
+  Tdata = c(Tdata, T)
+}
+hist(Tdata, freq=FALSE, main = "Histogramm der T Werte", xlab = "T-Wert", ylab = "relative Häufigkeit")
+curve(dt(x, length(data)-1), add = TRUE, col = "red")
+
+#Kolmogorov-Smirnoff-Test
+print(ks.test(Tdata, "pt", length(data)-1))
+```
+Da der $p$-Wert des Kolmogorov-Smirnoff-Tests kleiner als $1-\alpha=0.95$ ist, kann die Nullhypothese nicht verworfen werden, 
+also ist die Verteilung der Teststatistik t-verteilt.
+
+QQ-Plot:
+```{r}
+qqnorm(Tdata)
+qqline(Tdata)
+```
+Ergebnis: Alles deutet darauf hin, dass die Teststatistik t-verteilt ist.
 
 
+
+## $t-$Test mit bekannter Varianz
+Genau wie oben, nur dass wir die Varianz nicht schätzen müssen.
+Deshalb ist die Teststatistik $\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)$.
+Der Rest bleibt gleich:
+
+```{r}
+set.seed(123)
+mu0 <- 2
+sigma <- 4
+data <- rnorm(1000, mu0, sigma)
+alpha <- 0.05
+
+dataMean <- mean(data)
+
+T <- sqrt(length(data))*(dataMean-mu0)/sigma
+
+#Teststatistik
+print(paste("T = ", T))
+
+#p-Wert von T unter Normalverteilung
+print(paste("p-Wert von T = ", pnorm(T, length(data)-1, lower.tail = FALSE)))
+
+#Testresultat
+if (pnorm(T, lower.tail = FALSE) > 1-alpha){
+  print("Nullhypothese wird verworfen")
+} else {
+  print("Nullhypothese wird nicht verworfen")
+}
+```
+
+Verteilung der Teststatistik:
+```{r}
+set.seed(123)
+Tdata = c()
+
+for (i in 1:300){
+  data <- rnorm(1000, mu0, sigma)
+  alpha <- 0.05
+
+  T <- sqrt(length(data))*(mean(data)-mu0)/sigma
+  Tdata = c(Tdata, T)
+}
+hist(Tdata, freq=FALSE, main = "Histogramm der T Werte", xlab = "T-Wert", ylab = "relative Häufigkeit")
+curve(dnorm(x), add = TRUE, col = "red")
+
+#Kolmogorov-Smirnoff-Test
+print(ks.test(Tdata, "pnorm", lower.tail = FALSE))
+```
+Da der $p$-Wert des Kolmogorov-Smirnoff-Tests kleiner als $1-\alpha=0.95$ ist, kann die Nullhypothese nicht verworfen werden, 
+also ist die Verteilung der Teststatistik t-verteilt.
+
+QQ-Plot:
+```{r}
+qqnorm(Tdata)
+qqline(Tdata)
+```
+Ergebnis: Alles deutet darauf hin, dass die Teststatistik normalverteilt ist.
+
+
+# Aufgabe 2
+Lineare Regression mit R
+
+## Daten einlesen
+```{r}
+data <- read.table("Datensaetze/wine.txt", header = TRUE)
+```
+## Überblick über die Daten
+```{r}
+head(data)
+summary(data)
+```
+## Lineares Modell
+```{r}
+model <- lm(price ~ temp + h.rain + w.rain, data = data)
+summary(model)
+```
+In dem linearen Modell hat der Temperaturkoeffzient ein positives Vorzeichen, was bedeutet, 
+dass der Preis mit steigender Temperatur steigt.  
+Der Koeffizient für Niederschlag bei der Ernte hat ein negatives Vorzeichen, was bedeutet,
+dass der Preis mit steigendem Niederschlag bei der Ernte sinkt.  
+Der Koeffizient für Niederschlag im Winter hat ein positives Vorzeichen, was bedeutet,
+dass der Preis mit steigendem Niederschlag im Winter steigt.  
+
+## Angepasste Werte
+```{r}

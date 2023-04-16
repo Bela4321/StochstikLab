@@ -171,7 +171,322 @@ Simulieren wir nun den Versuch:
 
 \includegraphics{Test_files/figure-latex/unnamed-chunk-3-1.pdf}
 
-\hypertarget{b}{%
-\subsection{b)}\label{b}}
+\hypertarget{t-test-mit-unbekannter-varianz}{%
+\subsection{\texorpdfstring{\(t-\)Test mit unbekannter Varianz}{t-Test mit unbekannter Varianz}}\label{t-test-mit-unbekannter-varianz}}
+
+Beim zweiseitigen \(t-\)Test mit unbekannter Varianz wird die Nullhypothese \(H_0: \mu = \mu_0\) gegen die Alternative \(H_1: \mu \neq \mu_0\) getestet.
+Als Teststatistik wird \(\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) verwendet.\\
+Herleitung:\\
+Seien \(X_1, X_2, \dots, X_n\sim N(\mu, \sigma^2)\) unabhängig und identisch verteilt.\\
+Das arithmetische Mittel \(\bar X_n\) ist normalverteilt mit \(\mu = \mu\) und \(\sigma = \dfrac{\sigma}{\sqrt{n}}\).\\
+Bei bekannter Varianz wäre \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)\).
+Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also ist \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{S_n}\sim t_{n-1}\).(T-Verteilung folgt aus Störung durch die Varianzschätzung)
+
+Das heißt für den Test müssen wir nur die Teststatistik \(T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) berechnen und anschließend deren \(p\)-Wert bestimmen:
+
+Test:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{mu0 <-}\StringTok{ }\DecValTok{2}
+\NormalTok{sigma <-}\StringTok{ }\DecValTok{4}
+\NormalTok{data <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, mu0, sigma)}
+\NormalTok{alpha <-}\StringTok{ }\FloatTok{0.05}
+
+\NormalTok{dataVar <-}\StringTok{ }\KeywordTok{var}\NormalTok{(data)}
+\NormalTok{dataMean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(data)}
+
+\NormalTok{T <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{length}\NormalTok{(data))}\OperatorTok{*}\NormalTok{(dataMean}\OperatorTok{-}\NormalTok{mu0)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(dataVar)}
+
+\CommentTok{#Teststatistik}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"T = "}\NormalTok{, T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "T =  0.514279000759497"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#p-Wert von T}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"p-Wert von T = "}\NormalTok{, }\KeywordTok{pt}\NormalTok{(T, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "p-Wert von T =  0.303585342303021"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Testresultat}
+\ControlFlowTok{if}\NormalTok{ (}\KeywordTok{pt}\NormalTok{(T, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{>}\StringTok{ }\DecValTok{1}\OperatorTok{-}\NormalTok{alpha)\{}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Nullhypothese wird verworfen"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Nullhypothese wird nicht verworfen"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Nullhypothese wird nicht verworfen"
+\end{verbatim}
+
+Verteilung der Teststatistik:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{Tdata =}\StringTok{ }\KeywordTok{c}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{300}\NormalTok{)\{}
+\NormalTok{  data <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, mu0, sigma)}
+\NormalTok{  mu0 <-}\StringTok{ }\DecValTok{2}
+\NormalTok{  alpha <-}\StringTok{ }\FloatTok{0.05}
+
+\NormalTok{  T <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{length}\NormalTok{(data))}\OperatorTok{*}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data)}\OperatorTok{-}\NormalTok{mu0)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(data))}
+\NormalTok{  Tdata =}\StringTok{ }\KeywordTok{c}\NormalTok{(Tdata, T)}
+\NormalTok{\}}
+\KeywordTok{hist}\NormalTok{(Tdata, }\DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Histogramm der T Werte"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"T-Wert"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"relative Häufigkeit"}\NormalTok{)}
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{dt}\NormalTok{(x, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{), }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Kolmogorov-Smirnoff-Test}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{ks.test}\NormalTok{(Tdata, }\StringTok{"pt"}\NormalTok{, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  Tdata
+## D = 0.068075, p-value = 0.124
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+Da der \(p\)-Wert des Kolmogorov-Smirnoff-Tests kleiner als \(1-\alpha=0.95\) ist, kann die Nullhypothese nicht verworfen werden,
+also ist die Verteilung der Teststatistik t-verteilt.
+
+QQ-Plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{qqnorm}\NormalTok{(Tdata)}
+\KeywordTok{qqline}\NormalTok{(Tdata)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-6-1.pdf}
+Ergebnis: Alles deutet darauf hin, dass die Teststatistik t-verteilt ist.
+
+\hypertarget{t-test-mit-bekannter-varianz}{%
+\subsection{\texorpdfstring{\(t-\)Test mit bekannter Varianz}{t-Test mit bekannter Varianz}}\label{t-test-mit-bekannter-varianz}}
+
+Genau wie oben, nur dass wir die Varianz nicht schätzen müssen.
+Deshalb ist die Teststatistik \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)\).
+Der Rest bleibt gleich:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{mu0 <-}\StringTok{ }\DecValTok{2}
+\NormalTok{sigma <-}\StringTok{ }\DecValTok{4}
+\NormalTok{data <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, mu0, sigma)}
+\NormalTok{alpha <-}\StringTok{ }\FloatTok{0.05}
+
+\NormalTok{dataMean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(data)}
+
+\NormalTok{T <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{length}\NormalTok{(data))}\OperatorTok{*}\NormalTok{(dataMean}\OperatorTok{-}\NormalTok{mu0)}\OperatorTok{/}\NormalTok{sigma}
+
+\CommentTok{#Teststatistik}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"T = "}\NormalTok{, T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "T =  0.51000790152087"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#p-Wert von T unter Normalverteilung}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"p-Wert von T = "}\NormalTok{, }\KeywordTok{pnorm}\NormalTok{(T, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "p-Wert von T =  1"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Testresultat}
+\ControlFlowTok{if}\NormalTok{ (}\KeywordTok{pnorm}\NormalTok{(T, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{>}\StringTok{ }\DecValTok{1}\OperatorTok{-}\NormalTok{alpha)\{}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Nullhypothese wird verworfen"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Nullhypothese wird nicht verworfen"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Nullhypothese wird nicht verworfen"
+\end{verbatim}
+
+Verteilung der Teststatistik:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{Tdata =}\StringTok{ }\KeywordTok{c}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{300}\NormalTok{)\{}
+\NormalTok{  data <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, mu0, sigma)}
+\NormalTok{  alpha <-}\StringTok{ }\FloatTok{0.05}
+
+\NormalTok{  T <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{length}\NormalTok{(data))}\OperatorTok{*}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data)}\OperatorTok{-}\NormalTok{mu0)}\OperatorTok{/}\NormalTok{sigma}
+\NormalTok{  Tdata =}\StringTok{ }\KeywordTok{c}\NormalTok{(Tdata, T)}
+\NormalTok{\}}
+\KeywordTok{hist}\NormalTok{(Tdata, }\DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Histogramm der T Werte"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"T-Wert"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"relative Häufigkeit"}\NormalTok{)}
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{dnorm}\NormalTok{(x), }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Kolmogorov-Smirnoff-Test}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{ks.test}\NormalTok{(Tdata, }\StringTok{"pnorm"}\NormalTok{, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  Tdata
+## D = 0.99456, p-value < 2.2e-16
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+Da der \(p\)-Wert des Kolmogorov-Smirnoff-Tests kleiner als \(1-\alpha=0.95\) ist, kann die Nullhypothese nicht verworfen werden,
+also ist die Verteilung der Teststatistik t-verteilt.
+
+QQ-Plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{qqnorm}\NormalTok{(Tdata)}
+\KeywordTok{qqline}\NormalTok{(Tdata)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-9-1.pdf}
+Ergebnis: Alles deutet darauf hin, dass die Teststatistik normalverteilt ist.
+
+\hypertarget{aufgabe-2}{%
+\section{Aufgabe 2}\label{aufgabe-2}}
+
+Lineare Regression mit R
+
+\hypertarget{daten-einlesen}{%
+\subsection{Daten einlesen}\label{daten-einlesen}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"Datensaetze/wine.txt"}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{uxfcberblick-uxfcber-die-daten}{%
+\subsection{Überblick über die Daten}\label{uxfcberblick-uxfcber-die-daten}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   year price temp h.rain w.rain
+## 1 1952    37 17.1    160    600
+## 2 1953    63 16.7     80    690
+## 3 1955    45 17.1    130    502
+## 4 1957    22 16.1    110    420
+## 5 1958    18 16.4    187    582
+## 6 1959    66 17.5    187    485
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       year          price             temp           h.rain     
+##  Min.   :1952   Min.   : 10.00   Min.   :15.00   Min.   : 38.0  
+##  1st Qu.:1960   1st Qu.: 14.00   1st Qu.:16.15   1st Qu.: 88.0  
+##  Median :1967   Median : 22.00   Median :16.40   Median :123.0  
+##  Mean   :1967   Mean   : 28.81   Mean   :16.47   Mean   :144.8  
+##  3rd Qu.:1974   3rd Qu.: 35.00   3rd Qu.:17.00   3rd Qu.:185.5  
+##  Max.   :1980   Max.   :100.00   Max.   :17.60   Max.   :292.0  
+##      w.rain     
+##  Min.   :376.0  
+##  1st Qu.:543.5  
+##  Median :600.0  
+##  Mean   :608.4  
+##  3rd Qu.:705.5  
+##  Max.   :830.0
+\end{verbatim}
+
+\hypertarget{lineares-modell}{%
+\subsection{Lineares Modell}\label{lineares-modell}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(price }\OperatorTok{~}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{h.rain }\OperatorTok{+}\StringTok{ }\NormalTok{w.rain, }\DataTypeTok{data =}\NormalTok{ data)}
+\KeywordTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = price ~ temp + h.rain + w.rain, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -16.580  -8.601  -4.057   6.813  29.064 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) -365.45179   77.63849  -4.707 9.66e-05 ***
+## temp          22.50086    4.28502   5.251 2.51e-05 ***
+## h.rain        -0.09296    0.03746  -2.481   0.0208 *  
+## w.rain         0.06103    0.02247   2.717   0.0123 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 13.33 on 23 degrees of freedom
+## Multiple R-squared:  0.6421, Adjusted R-squared:  0.5954 
+## F-statistic: 13.75 on 3 and 23 DF,  p-value: 2.389e-05
+\end{verbatim}
+
+In dem linearen Modell hat der Temperaturkoeffzient ein positives Vorzeichen, was bedeutet,
+dass der Preis mit steigender Temperatur steigt.\\
+Der Koeffizient für Niederschlag bei der Ernte hat ein negatives Vorzeichen, was bedeutet,
+dass der Preis mit steigendem Niederschlag bei der Ernte sinkt.
+Der Koeffizient für Niederschlag im Winter hat ein positives Vorzeichen, was bedeutet,
+dass der Preis mit steigendem Niederschlag im Winter steigt.
 
 \end{document}
