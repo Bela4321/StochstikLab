@@ -1,9 +1,17 @@
-\contentsline {section}{\numberline {1}Einleitung}{1}{section.1}%
-\contentsline {section}{\numberline {2}Aufagabe 1}{1}{section.2}%
-\contentsline {subsection}{\numberline {2.1}\(\chi ^2\)-Anpassungstest}{1}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}\(t-\)Test mit unbekannter Varianz}{2}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}\(t-\)Test mit bekannter Varianz}{5}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Aufgabe 2}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Daten einlesen}{8}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Überblick über die Daten}{8}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Lineares Modell}{8}{subsection.3.3}%
+\contentsline {section}{Einleitung}{1}{section*.2}%
+\contentsline {section}{Aufagabe 1}{2}{section*.3}%
+\contentsline {subsection}{\(\chi ^2\)-Anpassungstest}{2}{section*.4}%
+\contentsline {subsection}{\(t-\)Test mit unbekannter Varianz}{3}{section*.5}%
+\contentsline {subsection}{\(t-\)Test mit bekannter Varianz}{6}{section*.6}%
+\contentsline {section}{Aufgabe 2}{9}{section*.7}%
+\contentsline {subsection}{Daten einlesen}{9}{section*.8}%
+\contentsline {subsection}{Überblick über die Daten}{9}{section*.9}%
+\contentsline {subsection}{Lineares Modell erstellen}{10}{section*.10}%
+\contentsline {subsection}{Angepasste Werte berechnen}{11}{section*.11}%
+\contentsline {subsection}{Bestimmtheitsmaß}{12}{section*.12}%
+\contentsline {subsection}{Erweiterung des linearen Modells}{12}{section*.13}%
+\contentsline {subsection}{Vergleich der Güte der Modelle}{13}{section*.14}%
+\contentsline {subsection}{Residuenanalyse}{13}{section*.15}%
+\contentsline {subsection}{Lineares Log Modell}{14}{section*.16}%
+\contentsline {subsubsection}{Residuenanalyse}{14}{section*.17}%
+\contentsline {subsection}{Vergleich der 3 Modelle}{15}{section*.18}%

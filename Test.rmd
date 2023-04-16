@@ -1,35 +1,46 @@
 ---
 title: "Stochastische Ausarbeitung"
-author: "Bela"
-date: "10.04.2023"
+author: "Bela Schinke"
+date: "16.04.2023"
 output:
   bookdown::pdf_document2:
+    citation_package: natbib
     fig_caption: yes
     keep_tex: yes
-    number_sections: yes
+    number_sections: no
     toc: true
+bibliography: "StochastikAusarbeitung.bib"
 ---
 
 # Einleitung
-Viel Spaß mit meiner Ausarbeitung :).
+Viel Spaß mit meiner Ausarbeitung :)  
+Quellen werden am Anfang jedes Kapitels aufgeführt.  
+  
+Allgemeine Formulierungshilfe von [@ChatGPT].  
+Text Completion für Freitext und (hauptsächlich) R Code von [@GithubCopilot].  
+Das Skript von [@skript] wurde bei fast allen Aufgaben verwendet.
 
 # Aufagabe 1
 ## $\chi^2$-Anpassungstest
+[@wikipediaChi2] 
 
 In der Multinomialverteilung haben wir $4$ Kategorien, welche jeweils Binomial verteilt sind. 
 Für große $n$ ist die Binomialverteilung normalverteilt mit  $\mu = n \cdot p$  und  $\sigma = \sqrt{n \cdot p \cdot (1-p)}$.
-Sei $a_1, a_2, a_3, a_4$ die Anzahl der Beobachtungen in den Kategorien. Damit ist $\dfrac{a_j-n \cdot p_j}{\sqrt{n \cdot p_j \cdot (1-p_j)}}\sim N(0,1)$.
-Also ist $\dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim (N(0,1))^2$  
+Sei $a_1, a_2, a_3, a_4$ die Anzahl der Beobachtungen in den Kategorien. Damit ist $\dfrac{a_j-n \cdot p_j}{\sqrt{n \cdot p_j}}\sim N(0,1)$.  
+Das wegfallen des $(1-p)$ im Nenner kommt daher, dass es sich um eine Multinomialverteilung handelt.  
+Also ist $\dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j}\sim (N(0,1))^2$  
 Damit ist die Summe $\sum_{j=1}^4 \dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim \chi^2_3$.  
+
 Da die p-Werte der $\chi^2$-Verteilung bekannt sind, kann so ein einfacher Hypothesentest durchgeführt werden:
   
 $$\begin{aligned}H_0: p_1 = \frac18, p_2 = \frac14, p_3 = \frac12, p_4 = \frac18  \\
-H_1: Nicht alle p_j haben werte wie H_0\end{aligned}$$
+H_1: p_1 \neq \frac18 \vee p_2 \neq \frac14 \vee p_3 \neq \frac12 \vee p_4 \neq \frac18\end{aligned}$$
 
 Simulieren wir nun den Versuch:
   
   ```{r}
   set.seed(123)
+  #Diese Funktion simuliert die Multinomialverteilung und berechnet die Chi2-Teststatistik
   simulateAnpassungstest <- function(){
     n <- 1000
     p <- c(1/8, 1/4, 1/2, 1/8)
@@ -40,6 +51,7 @@ Simulieren wir nun den Versuch:
   
   ```{r}
   results <- c()
+  #Wir berechnen 300-mal die Teststatistik und speichern sie in results
   for (i in 1:300){
     results =c(results ,simulateAnpassungstest())
   }
@@ -47,32 +59,40 @@ Simulieren wir nun den Versuch:
   ```
   
   ```{r}
-  hist(results, freq=FALSE, main = "Histogramm der Chi2 Werte", xlab = "Chi2-Wert", ylab = "relative Häufigkeit")
+  #Wir plotten die Verteilung der Teststatistik 
+  #und vergleichen sie mit der Chi2-Verteilung mit 3 Freiheitsgraden
+  hist(results, freq=FALSE, main = "Histogramm der Chi2 Werte", xlab = "Chi2-Wert",
+       ylab = "relative Häufigkeit", ylim = c(0, 0.25))
   curve(dchisq(x, 3), add = TRUE, col = "red")
   ```
 
 ## $t-$Test mit unbekannter Varianz
+[@wikipediaT]  
 Beim zweiseitigen $t-$Test mit unbekannter Varianz wird die Nullhypothese $H_0: \mu = \mu_0$ gegen die Alternative $H_1: \mu \neq \mu_0$ getestet.
 Als Teststatistik wird $\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ verwendet.  
 Herleitung:  
 Seien $X_1, X_2, \dots, X_n\sim N(\mu, \sigma^2)$ unabhängig und identisch verteilt.  
 Das arithmetische Mittel $\bar X_n$ ist normalverteilt mit $\mu = \mu$ und $\sigma = \dfrac{\sigma}{\sqrt{n}}$.  
 Bei bekannter Varianz wäre $\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)$.
-Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also ist $\sqrt{n}\dfrac{\bar X_n-\mu_0}{S_n}\sim t_{n-1}$.(T-Verteilung folgt aus Störung durch die Varianzschätzung)
+Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also ist $\sqrt{n}\dfrac{\bar X_n-\mu_0}{S_n}\sim t_{n-1}$.(T-Verteilung folgt aus Störung durch die Varianzschätzung, Skript 4.55)
 
-Das heißt für den Test müssen wir nur die Teststatistik $T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ berechnen und anschließend deren $p$-Wert bestimmen:
+Das heißt für den Test müssen wir nur die Teststatistik $T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ berechnen und anschließend deren $p$-Wert bestimmen. Wenn dieser kleiner als $1-\alpha$ ist, 
+wird die Nullhypothese verworfen.
   
 Test:
 ```{r}
+
 set.seed(123)
 mu0 <- 2
 sigma <- 4
 data <- rnorm(1000, mu0, sigma)
 alpha <- 0.05
 
+#Berechne mean und varianz der Daten
 dataVar <- var(data)
 dataMean <- mean(data)
 
+#Berechne Teststatistik
 T <- sqrt(length(data))*(dataMean-mu0)/sqrt(dataVar)
 
 #Teststatistik
@@ -94,6 +114,7 @@ Verteilung der Teststatistik:
 set.seed(123)
 Tdata = c()
 
+#Berechne Teststatistik 300-mal
 for (i in 1:300){
   data <- rnorm(1000, mu0, sigma)
   mu0 <- 2
@@ -102,9 +123,16 @@ for (i in 1:300){
   T <- sqrt(length(data))*(mean(data)-mu0)/sqrt(var(data))
   Tdata = c(Tdata, T)
 }
-hist(Tdata, freq=FALSE, main = "Histogramm der T Werte", xlab = "T-Wert", ylab = "relative Häufigkeit")
+#Histogramm der Teststatistik, vergleiche mit t-Verteilung
+hist(Tdata, freq=FALSE, main = "Histogramm der T Werte",
+     xlab = "T-Wert", ylab = "relative Häufigkeit")
 curve(dt(x, length(data)-1), add = TRUE, col = "red")
-
+```
+  
+Der Kolmogorov-Smirnov-Test prüft, ob eine Stichprobe aus einer spezifischen Verteilung stammt. 
+Er vergleicht die empirische kumulative Verteilungsfunktion der Stichprobe mit der kumulativen 
+Verteilungsfunktion der Population und berechnet den maximalen Abstand zwischen den beiden Funktionen. 
+```{r}	
 #Kolmogorov-Smirnoff-Test
 print(ks.test(Tdata, "pt", length(data)-1))
 ```
@@ -121,6 +149,7 @@ Ergebnis: Alles deutet darauf hin, dass die Teststatistik t-verteilt ist.
 
 
 ## $t-$Test mit bekannter Varianz
+[wikipediaT]  
 Genau wie oben, nur dass wir die Varianz nicht schätzen müssen.
 Deshalb ist die Teststatistik $\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)$.
 Der Rest bleibt gleich:
@@ -140,7 +169,7 @@ T <- sqrt(length(data))*(dataMean-mu0)/sigma
 print(paste("T = ", T))
 
 #p-Wert von T unter Normalverteilung
-print(paste("p-Wert von T = ", pnorm(T, length(data)-1, lower.tail = FALSE)))
+print(paste("p-Wert von T = ", pnorm(T, lower.tail = FALSE)))
 
 #Testresultat
 if (pnorm(T, lower.tail = FALSE) > 1-alpha){
@@ -191,7 +220,11 @@ data <- read.table("Datensaetze/wine.txt", header = TRUE)
 head(data)
 summary(data)
 ```
-## Lineares Modell
+## Lineares Modell erstellen
+Ein lineares Modell geht davon aus, dass eine Abhängige Variable (hier der Preis) von einer oder mehreren 
+unabhängigen Variablen (hier die Temperatur, der Niederschlag bei der Ernte und der Niederschlag im Winter) + 
+einem zufälligen Fehler erzeugt wird. Die lm-Funktion findet die Parameter, die das Modell 
+(nach der squared error Methode) am besten beschreiben.
 ```{r}
 model <- lm(price ~ temp + h.rain + w.rain, data = data)
 summary(model)
@@ -203,5 +236,106 @@ dass der Preis mit steigendem Niederschlag bei der Ernte sinkt.
 Der Koeffizient für Niederschlag im Winter hat ein positives Vorzeichen, was bedeutet,
 dass der Preis mit steigendem Niederschlag im Winter steigt.  
 
-## Angepasste Werte
+## Angepasste Werte berechnen
+Die angepassten Werte können wir mit Hilfe der Hut-Matrix berechnen (siehe Skript 9.11):
 ```{r}
+X = matrix(c(rep(1,length(data$temp)),data$temp,data$h.rain,data$w.rain),ncol=4)
+HutMatrix = X%*%solve(t(X)%*%X)%*%t(X)
+fittedValuesByHand = HutMatrix%*%data$price
+```
+Vergleichen mit den aus dem linearen Modell berechneten Werten:
+```{r}
+plot(fittedValuesByHand, model$fitted.values)
+if (all((fittedValuesByHand - model$fitted.values)<0.0001)){
+  print("Die beiden Werte sind annähernd gleich")
+} else {
+  print("Die beiden Werte sind nicht annähernd gleich")
+}
+```
+Die beiden Werte sind annähernd gleich (Unterschiede durch Rundungsfehler), was bedeutet, dass die Berechnung der angepassten Werte mit Hilfe der Hut-Matrix korrekt ist.
+
+## Bestimmtheitsmaß
+Berechne das Bestimmtheitsmaß $R^2$ (Skript 9.16):
+```{r}
+R2 = 1 - sum((data$price - fittedValuesByHand)^2)/sum((data$price - mean(data$price))^2)
+print(paste("R2 = ", R2))
+```
+Das Bestimmtheitsmaß ist ein Maß für die Güte des linearen Modells und liegt zwischen 0 und 1. 
+Es gibt den Anteil der Varianz durch die Regressionsvariablen an der Gesamtvarianz wieder. Grundsätzlich gilt je größer der Wert, 
+desto besser ist das Modell.  
+  
+  
+Berechne den geschätzten zufälligen Fehler $\hat\sigma^2$ (Skript 9.2.2):
+```{r}
+sigma.hat.sq = sum((data$price - fittedValuesByHand)^2)/(length(data$price)-4)
+print(paste("sigma.hat= ", sqrt(sigma.hat.sq)))
+```
+Die berechneten Werte stimmen mit den aus dem linearen Modell berechneten Werten überein. (siehe oben)
+
+## Erweiterung des linearen Modells
+Wir fügen das Jahr der Ernte als weitere unabhängige Variable hinzu:
+```{r}
+model2 <- lm(price ~ temp + h.rain + w.rain + year, data = data)
+summary(model2)
+```
+Der Koeffizient für das Jahr hat ein negatives Vorzeichen, was bedeutet, dass der Preis mit steigendem Jahr sinkt.
+Das kann daran liegen, dass alte Weine seltener sind und deshalb teurer sind, oder dass der verlängerte Reifeprozess 
+die Qualität der Weine steigert und deshalb der Preis steigt.
+
+## Vergleich der Güte der Modelle
+```{r}
+print(paste("R2 Vergleich: ","old model: ", summary(model)$r.squared,
+                            " new model: ", summary(model2)$r.squared))
+print(paste("Sigma Vergleich: ","old model: ", summary(model)$sigma,
+                              " new model: ", summary(model2)$sigma))
+```
+Das neue Modell hat ein besseres Bestimmtheitsmaß und einen kleineren geschätzten zufälligen Fehler.
+Das neue Modell wirkt also besser als das alte Modell. Man sollte aber auch noch den adjustierten $R^2$ betrachten.
+
+## Residuenanalyse
+```{r}
+plot(model$fitted.values, model$residuals, xlab = "fitted values", ylab = "residuals", main = "Residuenanalyse")
+```
+Die Residuen sind nicht unbedingt zufällig verteilt, man erkennt eine u-förmige Struktur. Das kann daran liegen, dass der 
+zufällige Fehler nicht unabhängig normalverteilt ist.
+
+## Lineares Log Modell
+```{r}
+model3 <- lm(log(price) ~ temp + h.rain + w.rain + year, data = data)
+summary(model3)
+```
+In der Summary steht nun auch der zufällige Fehler für die logarithmierten Daten. Um einen Vergleichbaren Wert zu erhalten,
+müssen wir den geschätzten zufälligen Fehler für die normalen Daten berechnen:
+```{r}
+true.fitted.values = exp(model3$fitted.values)
+model3.sigma.hat.sq = sum((data$price - true.fitted.values)^2)/(length(data$price)-4)
+print(paste("sigma.hat= ", sqrt(model3.sigma.hat.sq)))
+
+model3.R2=1-sum((data$price-true.fitted.values)^2)/sum((data$price-mean(data$price))^2)
+print(paste("R2= ", model3.R2))
+```
+Die angepassten Werte sind immernoch besser als die der vorherigen Modelle.
+
+### Residuenanalyse
+```{r}
+plot(exp(model3$fitted.values), exp(model3$residuals), xlab = "fitted values", ylab = "residuals", main = "Residuenanalyse")
+```
+Sieht relativ unabhängig normalverteilt aus.  
+Vergleich mit Modell 2:
+Modell 3 ist deutlich besser als Modell 2, da die Residuen von Modell 3 unabhängig normalverteilt wirken, und die von Modell 2 nicht.
+
+## Vergleich der 3 Modelle
+```{r}
+Vergleichstabelle <- data.frame(
+  Model = c("Model 1", "Model 2", "Model 3"),
+  R2 = c(summary(model)$r.squared, summary(model2)$r.squared, model3.R2),
+  Adjusted.R2 = c(summary(model)$adj.r.squared, summary(model2)$adj.r.squared,
+                  1-(1-model3.R2)*(length(data$price)-1)/(length(data$price)-4)),
+  Sigma = c(summary(model)$sigma, summary(model2)$sigma, sqrt(model3.sigma.hat.sq))
+)
+knitr::kable(Vergleichstabelle)
+```
+
+Das dritte Modell ist signifikant besser als die anderen beiden Modelle, das sieht man an der höheren Adjusted $R^2$
+ und dem kleineren geschätzten zufälligen Fehler.  
+

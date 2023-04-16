@@ -30,7 +30,7 @@
 \usepackage{hyperref}
 \hypersetup{
             pdftitle={Stochastische Ausarbeitung},
-            pdfauthor={Bela},
+            pdfauthor={Bela Schinke},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -90,7 +90,7 @@
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
+\setcounter{secnumdepth}{0}
 % Redefines (sub)paragraphs to behave more like sections
 \ifx\paragraph\undefined\else
 \let\oldparagraph\paragraph
@@ -106,10 +106,12 @@
 \def\fps@figure{htbp}
 \makeatother
 
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
 
 \title{Stochastische Ausarbeitung}
-\author{Bela}
-\date{10.04.2023}
+\author{Bela Schinke}
+\date{16.04.2023}
 
 \begin{document}
 \maketitle
@@ -121,7 +123,12 @@
 \hypertarget{einleitung}{%
 \section{Einleitung}\label{einleitung}}
 
-Viel Spaß mit meiner Ausarbeitung :).
+Viel Spaß mit meiner Ausarbeitung :)\\
+Quellen werden am Anfang jedes Kapitels aufgeführt.
+
+Allgemeine Formulierungshilfe von \citep{ChatGPT}.\\
+Text Completion für Freitext und (hauptsächlich) R Code von \citep{GithubCopilot}.\\
+Das Skript von \citep{skript} wurde bei fast allen Aufgaben verwendet.
 
 \hypertarget{aufagabe-1}{%
 \section{Aufagabe 1}\label{aufagabe-1}}
@@ -129,21 +136,26 @@ Viel Spaß mit meiner Ausarbeitung :).
 \hypertarget{chi2-anpassungstest}{%
 \subsection{\texorpdfstring{\(\chi^2\)-Anpassungstest}{\textbackslash{}chi\^{}2-Anpassungstest}}\label{chi2-anpassungstest}}
 
+\citep{wikipediaChi2}
+
 In der Multinomialverteilung haben wir \(4\) Kategorien, welche jeweils Binomial verteilt sind.
 Für große \(n\) ist die Binomialverteilung normalverteilt mit \(\mu = n \cdot p\) und \(\sigma = \sqrt{n \cdot p \cdot (1-p)}\).
-Sei \(a_1, a_2, a_3, a_4\) die Anzahl der Beobachtungen in den Kategorien. Damit ist \(\dfrac{a_j-n \cdot p_j}{\sqrt{n \cdot p_j \cdot (1-p_j)}}\sim N(0,1)\).
-Also ist \(\dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim (N(0,1))^2\)\\
-Damit ist die Summe \(\sum_{j=1}^4 \dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim \chi^2_3\).\\
+Sei \(a_1, a_2, a_3, a_4\) die Anzahl der Beobachtungen in den Kategorien. Damit ist \(\dfrac{a_j-n \cdot p_j}{\sqrt{n \cdot p_j}}\sim N(0,1)\).\\
+Das wegfallen des \((1-p)\) im Nenner kommt daher, dass es sich um eine Multinomialverteilung handelt.\\
+Also ist \(\dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j}\sim (N(0,1))^2\)\\
+Damit ist die Summe \(\sum_{j=1}^4 \dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim \chi^2_3\).
+
 Da die p-Werte der \(\chi^2\)-Verteilung bekannt sind, kann so ein einfacher Hypothesentest durchgeführt werden:
 
 \[\begin{aligned}H_0: p_1 = \frac18, p_2 = \frac14, p_3 = \frac12, p_4 = \frac18  \\
-H_1: Nicht alle p_j haben werte wie H_0\end{aligned}\]
+H_1: p_1 \neq \frac18 \vee p_2 \neq \frac14 \vee p_3 \neq \frac12 \vee p_4 \neq \frac18\end{aligned}\]
 
 Simulieren wir nun den Versuch:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\CommentTok{#Diese Funktion simuliert die Multinomialverteilung und berechnet die Chi2-Teststatistik}
 \NormalTok{simulateAnpassungstest <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
 \NormalTok{  n <-}\StringTok{ }\DecValTok{1000}
 \NormalTok{  p <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{/}\DecValTok{8}\NormalTok{, }\DecValTok{1}\OperatorTok{/}\DecValTok{4}\NormalTok{, }\DecValTok{1}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{1}\OperatorTok{/}\DecValTok{8}\NormalTok{)}
@@ -156,6 +168,7 @@ Simulieren wir nun den Versuch:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{results <-}\StringTok{ }\KeywordTok{c}\NormalTok{()}
+\CommentTok{#Wir berechnen 300-mal die Teststatistik und speichern sie in results}
 \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{300}\NormalTok{)\{}
 \NormalTok{  results =}\KeywordTok{c}\NormalTok{(results ,}\KeywordTok{simulateAnpassungstest}\NormalTok{())}
 \NormalTok{\}}
@@ -164,7 +177,10 @@ Simulieren wir nun den Versuch:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{hist}\NormalTok{(results, }\DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Histogramm der Chi2 Werte"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"Chi2-Wert"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"relative Häufigkeit"}\NormalTok{)}
+\CommentTok{#Wir plotten die Verteilung der Teststatistik }
+\CommentTok{#und vergleichen sie mit der Chi2-Verteilung mit 3 Freiheitsgraden}
+\KeywordTok{hist}\NormalTok{(results, }\DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Histogramm der Chi2 Werte"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"Chi2-Wert"}\NormalTok{,}
+     \DataTypeTok{ylab =} \StringTok{"relative Häufigkeit"}\NormalTok{, }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.25}\NormalTok{))}
 \KeywordTok{curve}\NormalTok{(}\KeywordTok{dchisq}\NormalTok{(x, }\DecValTok{3}\NormalTok{), }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -174,15 +190,17 @@ Simulieren wir nun den Versuch:
 \hypertarget{t-test-mit-unbekannter-varianz}{%
 \subsection{\texorpdfstring{\(t-\)Test mit unbekannter Varianz}{t-Test mit unbekannter Varianz}}\label{t-test-mit-unbekannter-varianz}}
 
+\citep{wikipediaT}\\
 Beim zweiseitigen \(t-\)Test mit unbekannter Varianz wird die Nullhypothese \(H_0: \mu = \mu_0\) gegen die Alternative \(H_1: \mu \neq \mu_0\) getestet.
 Als Teststatistik wird \(\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) verwendet.\\
 Herleitung:\\
 Seien \(X_1, X_2, \dots, X_n\sim N(\mu, \sigma^2)\) unabhängig und identisch verteilt.\\
 Das arithmetische Mittel \(\bar X_n\) ist normalverteilt mit \(\mu = \mu\) und \(\sigma = \dfrac{\sigma}{\sqrt{n}}\).\\
 Bei bekannter Varianz wäre \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)\).
-Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also ist \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{S_n}\sim t_{n-1}\).(T-Verteilung folgt aus Störung durch die Varianzschätzung)
+Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also ist \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{S_n}\sim t_{n-1}\).(T-Verteilung folgt aus Störung durch die Varianzschätzung, Skript 4.55)
 
-Das heißt für den Test müssen wir nur die Teststatistik \(T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) berechnen und anschließend deren \(p\)-Wert bestimmen:
+Das heißt für den Test müssen wir nur die Teststatistik \(T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) berechnen und anschließend deren \(p\)-Wert bestimmen. Wenn dieser kleiner als \(1-\alpha\) ist,
+wird die Nullhypothese verworfen.
 
 Test:
 
@@ -194,9 +212,11 @@ Test:
 \NormalTok{data <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, mu0, sigma)}
 \NormalTok{alpha <-}\StringTok{ }\FloatTok{0.05}
 
+\CommentTok{#Berechne mean und varianz der Daten}
 \NormalTok{dataVar <-}\StringTok{ }\KeywordTok{var}\NormalTok{(data)}
 \NormalTok{dataMean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(data)}
 
+\CommentTok{#Berechne Teststatistik}
 \NormalTok{T <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{length}\NormalTok{(data))}\OperatorTok{*}\NormalTok{(dataMean}\OperatorTok{-}\NormalTok{mu0)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(dataVar)}
 
 \CommentTok{#Teststatistik}
@@ -241,6 +261,7 @@ Verteilung der Teststatistik:
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
 \NormalTok{Tdata =}\StringTok{ }\KeywordTok{c}\NormalTok{()}
 
+\CommentTok{#Berechne Teststatistik 300-mal}
 \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{300}\NormalTok{)\{}
 \NormalTok{  data <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, mu0, sigma)}
 \NormalTok{  mu0 <-}\StringTok{ }\DecValTok{2}
@@ -249,12 +270,18 @@ Verteilung der Teststatistik:
 \NormalTok{  T <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{length}\NormalTok{(data))}\OperatorTok{*}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data)}\OperatorTok{-}\NormalTok{mu0)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(data))}
 \NormalTok{  Tdata =}\StringTok{ }\KeywordTok{c}\NormalTok{(Tdata, T)}
 \NormalTok{\}}
-\KeywordTok{hist}\NormalTok{(Tdata, }\DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Histogramm der T Werte"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"T-Wert"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"relative Häufigkeit"}\NormalTok{)}
+\CommentTok{#Histogramm der Teststatistik, vergleiche mit t-Verteilung}
+\KeywordTok{hist}\NormalTok{(Tdata, }\DataTypeTok{freq=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Histogramm der T Werte"}\NormalTok{,}
+     \DataTypeTok{xlab =} \StringTok{"T-Wert"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"relative Häufigkeit"}\NormalTok{)}
 \KeywordTok{curve}\NormalTok{(}\KeywordTok{dt}\NormalTok{(x, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{), }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{Test_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+Der Kolmogorov-Smirnov-Test prüft, ob eine Stichprobe aus einer spezifischen Verteilung stammt.
+Er vergleicht die empirische kumulative Verteilungsfunktion der Stichprobe mit der kumulativen
+Verteilungsfunktion der Population und berechnet den maximalen Abstand zwischen den beiden Funktionen.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -284,12 +311,13 @@ QQ-Plot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-7-1.pdf}
 Ergebnis: Alles deutet darauf hin, dass die Teststatistik t-verteilt ist.
 
 \hypertarget{t-test-mit-bekannter-varianz}{%
 \subsection{\texorpdfstring{\(t-\)Test mit bekannter Varianz}{t-Test mit bekannter Varianz}}\label{t-test-mit-bekannter-varianz}}
 
+{[}wikipediaT{]}\\
 Genau wie oben, nur dass wir die Varianz nicht schätzen müssen.
 Deshalb ist die Teststatistik \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)\).
 Der Rest bleibt gleich:
@@ -318,12 +346,12 @@ Der Rest bleibt gleich:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{#p-Wert von T unter Normalverteilung}
-\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"p-Wert von T = "}\NormalTok{, }\KeywordTok{pnorm}\NormalTok{(T, }\KeywordTok{length}\NormalTok{(data)}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{)))}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"p-Wert von T = "}\NormalTok{, }\KeywordTok{pnorm}\NormalTok{(T, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{)))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] "p-Wert von T =  1"
+## [1] "p-Wert von T =  0.305022963064507"
 \end{verbatim}
 
 \begin{Shaded}
@@ -360,7 +388,7 @@ Verteilung der Teststatistik:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-9-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -390,7 +418,7 @@ QQ-Plot:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-9-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-1.pdf}
 Ergebnis: Alles deutet darauf hin, dass die Teststatistik normalverteilt ist.
 
 \hypertarget{aufgabe-2}{%
@@ -449,8 +477,13 @@ Lineare Regression mit R
 ##  Max.   :830.0
 \end{verbatim}
 
-\hypertarget{lineares-modell}{%
-\subsection{Lineares Modell}\label{lineares-modell}}
+\hypertarget{lineares-modell-erstellen}{%
+\subsection{Lineares Modell erstellen}\label{lineares-modell-erstellen}}
+
+Ein lineares Modell geht davon aus, dass eine Abhängige Variable (hier der Preis) von einer oder mehreren
+unabhängigen Variablen (hier die Temperatur, der Niederschlag bei der Ernte und der Niederschlag im Winter) +
+einem zufälligen Fehler erzeugt wird. Die lm-Funktion findet die Parameter, die das Modell
+(nach der squared error Methode) am besten beschreiben.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -485,8 +518,272 @@ Lineare Regression mit R
 In dem linearen Modell hat der Temperaturkoeffzient ein positives Vorzeichen, was bedeutet,
 dass der Preis mit steigender Temperatur steigt.\\
 Der Koeffizient für Niederschlag bei der Ernte hat ein negatives Vorzeichen, was bedeutet,
-dass der Preis mit steigendem Niederschlag bei der Ernte sinkt.
+dass der Preis mit steigendem Niederschlag bei der Ernte sinkt.\\
 Der Koeffizient für Niederschlag im Winter hat ein positives Vorzeichen, was bedeutet,
 dass der Preis mit steigendem Niederschlag im Winter steigt.
+
+\hypertarget{angepasste-werte-berechnen}{%
+\subsection{Angepasste Werte berechnen}\label{angepasste-werte-berechnen}}
+
+Die angepassten Werte können wir mit Hilfe der Hut-Matrix berechnen (siehe Skript 9.11):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{X =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,}\KeywordTok{length}\NormalTok{(data}\OperatorTok{$}\NormalTok{temp)),data}\OperatorTok{$}\NormalTok{temp,data}\OperatorTok{$}\NormalTok{h.rain,data}\OperatorTok{$}\NormalTok{w.rain),}\DataTypeTok{ncol=}\DecValTok{4}\NormalTok{)}
+\NormalTok{HutMatrix =}\StringTok{ }\NormalTok{X}\OperatorTok{%*%}\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(X)}\OperatorTok{%*%}\NormalTok{X)}\OperatorTok{%*%}\KeywordTok{t}\NormalTok{(X)}
+\NormalTok{fittedValuesByHand =}\StringTok{ }\NormalTok{HutMatrix}\OperatorTok{%*%}\NormalTok{data}\OperatorTok{$}\NormalTok{price}
+\end{Highlighting}
+\end{Shaded}
+
+Vergleichen mit den aus dem linearen Modell berechneten Werten:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(fittedValuesByHand, model}\OperatorTok{$}\NormalTok{fitted.values)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\KeywordTok{all}\NormalTok{((fittedValuesByHand }\OperatorTok{-}\StringTok{ }\NormalTok{model}\OperatorTok{$}\NormalTok{fitted.values)}\OperatorTok{<}\FloatTok{0.0001}\NormalTok{))\{}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Die beiden Werte sind annähernd gleich"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Die beiden Werte sind nicht annähernd gleich"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Die beiden Werte sind annähernd gleich"
+\end{verbatim}
+
+Die beiden Werte sind annähernd gleich (Unterschiede durch Rundungsfehler), was bedeutet, dass die Berechnung der angepassten Werte mit Hilfe der Hut-Matrix korrekt ist.
+
+\hypertarget{bestimmtheitsmauxdf}{%
+\subsection{Bestimmtheitsmaß}\label{bestimmtheitsmauxdf}}
+
+Berechne das Bestimmtheitsmaß \(R^2\) (Skript 9.16):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{R2 =}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{sum}\NormalTok{((data}\OperatorTok{$}\NormalTok{price }\OperatorTok{-}\StringTok{ }\NormalTok{fittedValuesByHand)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sum}\NormalTok{((data}\OperatorTok{$}\NormalTok{price }\OperatorTok{-}\StringTok{ }\KeywordTok{mean}\NormalTok{(data}\OperatorTok{$}\NormalTok{price))}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"R2 = "}\NormalTok{, R2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "R2 =  0.642088980919609"
+\end{verbatim}
+
+Das Bestimmtheitsmaß ist ein Maß für die Güte des linearen Modells und liegt zwischen 0 und 1.
+Es gibt den Anteil der Varianz durch die Regressionsvariablen an der Gesamtvarianz wieder. Grundsätzlich gilt je größer der Wert,
+desto besser ist das Modell.
+
+Berechne den geschätzten zufälligen Fehler \(\hat\sigma^2\) (Skript 9.2.2):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sigma.hat.sq =}\StringTok{ }\KeywordTok{sum}\NormalTok{((data}\OperatorTok{$}\NormalTok{price }\OperatorTok{-}\StringTok{ }\NormalTok{fittedValuesByHand)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\NormalTok{(}\KeywordTok{length}\NormalTok{(data}\OperatorTok{$}\NormalTok{price)}\OperatorTok{-}\DecValTok{4}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"sigma.hat= "}\NormalTok{, }\KeywordTok{sqrt}\NormalTok{(sigma.hat.sq)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "sigma.hat=  13.3296898554664"
+\end{verbatim}
+
+Die berechneten Werte stimmen mit den aus dem linearen Modell berechneten Werten überein. (siehe oben)
+
+\hypertarget{erweiterung-des-linearen-modells}{%
+\subsection{Erweiterung des linearen Modells}\label{erweiterung-des-linearen-modells}}
+
+Wir fügen das Jahr der Ernte als weitere unabhängige Variable hinzu:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(price }\OperatorTok{~}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{h.rain }\OperatorTok{+}\StringTok{ }\NormalTok{w.rain }\OperatorTok{+}\StringTok{ }\NormalTok{year, }\DataTypeTok{data =}\NormalTok{ data)}
+\KeywordTok{summary}\NormalTok{(model2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = price ~ temp + h.rain + w.rain + year, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -14.077  -9.040  -1.018   3.172  26.991 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 1305.52761  597.31137   2.186  0.03977 *  
+## temp          19.25337    3.92945   4.900 6.72e-05 ***
+## h.rain        -0.10121    0.03297  -3.070  0.00561 ** 
+## w.rain         0.05704    0.01975   2.889  0.00853 ** 
+## year          -0.82055    0.29140  -2.816  0.01007 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 11.69 on 22 degrees of freedom
+## Multiple R-squared:  0.7369, Adjusted R-squared:  0.6891 
+## F-statistic: 15.41 on 4 and 22 DF,  p-value: 3.806e-06
+\end{verbatim}
+
+Der Koeffizient für das Jahr hat ein negatives Vorzeichen, was bedeutet, dass der Preis mit steigendem Jahr sinkt.
+Das kann daran liegen, dass alte Weine seltener sind und deshalb teurer sind, oder dass der verlängerte Reifeprozess
+die Qualität der Weine steigert und deshalb der Preis steigt.
+
+\hypertarget{vergleich-der-guxfcte-der-modelle}{%
+\subsection{Vergleich der Güte der Modelle}\label{vergleich-der-guxfcte-der-modelle}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"R2 Vergleich: "}\NormalTok{,}\StringTok{"old model: "}\NormalTok{, }\KeywordTok{summary}\NormalTok{(model)}\OperatorTok{$}\NormalTok{r.squared,}
+                            \StringTok{" new model: "}\NormalTok{, }\KeywordTok{summary}\NormalTok{(model2)}\OperatorTok{$}\NormalTok{r.squared))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "R2 Vergleich:  old model:  0.642088980919612  new model:  0.736908910750188"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Sigma Vergleich: "}\NormalTok{,}\StringTok{"old model: "}\NormalTok{, }\KeywordTok{summary}\NormalTok{(model)}\OperatorTok{$}\NormalTok{sigma,}
+                              \StringTok{" new model: "}\NormalTok{, }\KeywordTok{summary}\NormalTok{(model2)}\OperatorTok{$}\NormalTok{sigma))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Sigma Vergleich:  old model:  13.3296898554663  new model:  11.6852540044809"
+\end{verbatim}
+
+Das neue Modell hat ein besseres Bestimmtheitsmaß und einen kleineren geschätzten zufälligen Fehler.
+Das neue Modell wirkt also besser als das alte Modell. Man sollte aber auch noch den adjustierten \(R^2\) betrachten.
+
+\hypertarget{residuenanalyse}{%
+\subsection{Residuenanalyse}\label{residuenanalyse}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(model}\OperatorTok{$}\NormalTok{fitted.values, model}\OperatorTok{$}\NormalTok{residuals, }\DataTypeTok{xlab =} \StringTok{"fitted values"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"residuals"}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Residuenanalyse"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-20-1.pdf}
+Die Residuen sind nicht unbedingt zufällig verteilt, man erkennt eine u-förmige Struktur. Das kann daran liegen, dass der
+zufällige Fehler nicht unabhängig normalverteilt ist.
+
+\hypertarget{lineares-log-modell}{%
+\subsection{Lineares Log Modell}\label{lineares-log-modell}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model3 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\KeywordTok{log}\NormalTok{(price) }\OperatorTok{~}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{h.rain }\OperatorTok{+}\StringTok{ }\NormalTok{w.rain }\OperatorTok{+}\StringTok{ }\NormalTok{year, }\DataTypeTok{data =}\NormalTok{ data)}
+\KeywordTok{summary}\NormalTok{(model3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log(price) ~ temp + h.rain + w.rain + year, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.4450 -0.2362  0.0181  0.1888  0.5100 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 40.6777920 14.3374580   2.837  0.00959 ** 
+## temp         0.6187109  0.0943199   6.560 1.35e-06 ***
+## h.rain      -0.0037482  0.0007915  -4.736  0.00010 ***
+## w.rain       0.0011972  0.0004740   2.526  0.01924 *  
+## year        -0.0243519  0.0069947  -3.481  0.00212 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.2805 on 22 degrees of freedom
+## Multiple R-squared:  0.8308, Adjusted R-squared:  0.8001 
+## F-statistic: 27.01 on 4 and 22 DF,  p-value: 3.294e-08
+\end{verbatim}
+
+In der Summary steht nun auch der zufällige Fehler für die logarithmierten Daten. Um einen Vergleichbaren Wert zu erhalten,
+müssen wir den geschätzten zufälligen Fehler für die normalen Daten berechnen:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{true.fitted.values =}\StringTok{ }\KeywordTok{exp}\NormalTok{(model3}\OperatorTok{$}\NormalTok{fitted.values)}
+\NormalTok{model3.sigma.hat.sq =}\StringTok{ }\KeywordTok{sum}\NormalTok{((data}\OperatorTok{$}\NormalTok{price }\OperatorTok{-}\StringTok{ }\NormalTok{true.fitted.values)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\NormalTok{(}\KeywordTok{length}\NormalTok{(data}\OperatorTok{$}\NormalTok{price)}\OperatorTok{-}\DecValTok{4}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"sigma.hat= "}\NormalTok{, }\KeywordTok{sqrt}\NormalTok{(model3.sigma.hat.sq)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "sigma.hat=  8.41672958083313"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model3.R2=}\DecValTok{1}\OperatorTok{-}\KeywordTok{sum}\NormalTok{((data}\OperatorTok{$}\NormalTok{price}\OperatorTok{-}\NormalTok{true.fitted.values)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sum}\NormalTok{((data}\OperatorTok{$}\NormalTok{price}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(data}\OperatorTok{$}\NormalTok{price))}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"R2= "}\NormalTok{, model3.R2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "R2=  0.857300737700796"
+\end{verbatim}
+
+Die angepassten Werte sind immernoch besser als die der vorherigen Modelle.
+
+\hypertarget{residuenanalyse-1}{%
+\subsubsection{Residuenanalyse}\label{residuenanalyse-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{exp}\NormalTok{(model3}\OperatorTok{$}\NormalTok{fitted.values), }\KeywordTok{exp}\NormalTok{(model3}\OperatorTok{$}\NormalTok{residuals), }\DataTypeTok{xlab =} \StringTok{"fitted values"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"residuals"}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Residuenanalyse"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-23-1.pdf}
+Sieht relativ unabhängig normalverteilt aus.\\
+Vergleich mit Modell 2:
+Modell 3 ist deutlich besser als Modell 2, da die Residuen von Modell 3 unabhängig normalverteilt wirken, und die von Modell 2 nicht.
+
+\hypertarget{vergleich-der-3-modelle}{%
+\subsection{Vergleich der 3 Modelle}\label{vergleich-der-3-modelle}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Vergleichstabelle <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}
+  \DataTypeTok{Model =} \KeywordTok{c}\NormalTok{(}\StringTok{"Model 1"}\NormalTok{, }\StringTok{"Model 2"}\NormalTok{, }\StringTok{"Model 3"}\NormalTok{),}
+  \DataTypeTok{R2 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{summary}\NormalTok{(model)}\OperatorTok{$}\NormalTok{r.squared, }\KeywordTok{summary}\NormalTok{(model2)}\OperatorTok{$}\NormalTok{r.squared, model3.R2),}
+  \DataTypeTok{Adjusted.R2 =} \KeywordTok{c}\NormalTok{(}\KeywordTok{summary}\NormalTok{(model)}\OperatorTok{$}\NormalTok{adj.r.squared, }\KeywordTok{summary}\NormalTok{(model2)}\OperatorTok{$}\NormalTok{adj.r.squared,}
+                  \DecValTok{1}\OperatorTok{-}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{model3.R2)}\OperatorTok{*}\NormalTok{(}\KeywordTok{length}\NormalTok{(data}\OperatorTok{$}\NormalTok{price)}\OperatorTok{-}\DecValTok{1}\NormalTok{)}\OperatorTok{/}\NormalTok{(}\KeywordTok{length}\NormalTok{(data}\OperatorTok{$}\NormalTok{price)}\OperatorTok{-}\DecValTok{4}\NormalTok{)),}
+  \DataTypeTok{Sigma =} \KeywordTok{c}\NormalTok{(}\KeywordTok{summary}\NormalTok{(model)}\OperatorTok{$}\NormalTok{sigma, }\KeywordTok{summary}\NormalTok{(model2)}\OperatorTok{$}\NormalTok{sigma, }\KeywordTok{sqrt}\NormalTok{(model3.sigma.hat.sq))}
+\NormalTok{)}
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(Vergleichstabelle)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tabular}{l|r|r|r}
+\hline
+Model & R2 & Adjusted.R2 & Sigma\\
+\hline
+Model 1 & 0.6420890 & 0.5954049 & 13.32969\\
+\hline
+Model 2 & 0.7369089 & 0.6890742 & 11.68525\\
+\hline
+Model 3 & 0.8573007 & 0.8386878 & 8.41673\\
+\hline
+\end{tabular}
+
+Das dritte Modell ist signifikant besser als die anderen beiden Modelle, das sieht man an der höheren Adjusted \(R^2\)
+und dem kleineren geschätzten zufälligen Fehler.
+
+\bibliography{StochastikAusarbeitung.bib}
 
 \end{document}
