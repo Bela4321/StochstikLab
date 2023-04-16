@@ -1,17 +1,26 @@
 \contentsline {section}{Einleitung}{1}{section*.2}%
 \contentsline {section}{Aufagabe 1}{2}{section*.3}%
 \contentsline {subsection}{\(\chi ^2\)-Anpassungstest}{2}{section*.4}%
-\contentsline {subsection}{\(t-\)Test mit unbekannter Varianz}{3}{section*.5}%
-\contentsline {subsection}{\(t-\)Test mit bekannter Varianz}{6}{section*.6}%
-\contentsline {section}{Aufgabe 2}{9}{section*.7}%
-\contentsline {subsection}{Daten einlesen}{9}{section*.8}%
-\contentsline {subsection}{Überblick über die Daten}{9}{section*.9}%
-\contentsline {subsection}{Lineares Modell erstellen}{10}{section*.10}%
-\contentsline {subsection}{Angepasste Werte berechnen}{11}{section*.11}%
-\contentsline {subsection}{Bestimmtheitsmaß}{12}{section*.12}%
-\contentsline {subsection}{Erweiterung des linearen Modells}{12}{section*.13}%
-\contentsline {subsection}{Vergleich der Güte der Modelle}{13}{section*.14}%
-\contentsline {subsection}{Residuenanalyse}{13}{section*.15}%
-\contentsline {subsection}{Lineares Log Modell}{14}{section*.16}%
-\contentsline {subsubsection}{Residuenanalyse}{14}{section*.17}%
-\contentsline {subsection}{Vergleich der 3 Modelle}{15}{section*.18}%
+\contentsline {subsubsection}{Theorieteil}{2}{section*.5}%
+\contentsline {subsubsection}{Anwendung}{2}{section*.6}%
+\contentsline {subsection}{\(t-\)Test mit unbekannter Varianz}{3}{section*.7}%
+\contentsline {subsubsection}{Theorieteil}{3}{section*.8}%
+\contentsline {subsubsection}{Anwendung}{3}{section*.9}%
+\contentsline {subsection}{\(t-\)Test mit bekannter Varianz}{6}{section*.10}%
+\contentsline {subsubsection}{Theorieteil}{6}{section*.11}%
+\contentsline {subsubsection}{Anwendung}{6}{section*.12}%
+\contentsline {section}{Aufgabe 2}{9}{section*.13}%
+\contentsline {subsubsection}{Theorieteil}{9}{section*.14}%
+\contentsline {subsubsection}{Anwendung}{9}{section*.15}%
+\contentsline {subsection}{Daten einlesen}{9}{section*.16}%
+\contentsline {subsection}{Überblick über die Daten}{10}{section*.17}%
+\contentsline {subsection}{Lineares Modell erstellen}{10}{section*.18}%
+\contentsline {subsection}{Angepasste Werte berechnen}{11}{section*.19}%
+\contentsline {subsection}{Bestimmtheitsmaß}{12}{section*.20}%
+\contentsline {subsection}{zufälliger Fehler}{13}{section*.21}%
+\contentsline {subsection}{Erweiterung des linearen Modells}{13}{section*.22}%
+\contentsline {subsection}{Vergleich der Güte der Modelle}{13}{section*.23}%
+\contentsline {subsection}{Residuenanalyse}{14}{section*.24}%
+\contentsline {subsection}{Lineares Log Modell}{14}{section*.25}%
+\contentsline {subsubsection}{Residuenanalyse}{15}{section*.26}%
+\contentsline {subsection}{Vergleich der 3 Modelle}{16}{section*.27}%

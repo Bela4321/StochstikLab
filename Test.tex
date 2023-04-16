@@ -136,6 +136,9 @@ Das Skript von \citep{skript} wurde bei fast allen Aufgaben verwendet.
 \hypertarget{chi2-anpassungstest}{%
 \subsection{\texorpdfstring{\(\chi^2\)-Anpassungstest}{\textbackslash{}chi\^{}2-Anpassungstest}}\label{chi2-anpassungstest}}
 
+\hypertarget{theorieteil}{%
+\subsubsection{Theorieteil}\label{theorieteil}}
+
 \citep{wikipediaChi2}
 
 In der Multinomialverteilung haben wir \(4\) Kategorien, welche jeweils Binomial verteilt sind.
@@ -146,6 +149,9 @@ Also ist \(\dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j}\sim (N(0,1))^2\)\\
 Damit ist die Summe \(\sum_{j=1}^4 \dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot (1-p_j)}\sim \chi^2_3\).
 
 Da die p-Werte der \(\chi^2\)-Verteilung bekannt sind, kann so ein einfacher Hypothesentest durchgeführt werden:
+
+\hypertarget{anwendung}{%
+\subsubsection{Anwendung}\label{anwendung}}
 
 \[\begin{aligned}H_0: p_1 = \frac18, p_2 = \frac14, p_3 = \frac12, p_4 = \frac18  \\
 H_1: p_1 \neq \frac18 \vee p_2 \neq \frac14 \vee p_3 \neq \frac12 \vee p_4 \neq \frac18\end{aligned}\]
@@ -190,6 +196,9 @@ Simulieren wir nun den Versuch:
 \hypertarget{t-test-mit-unbekannter-varianz}{%
 \subsection{\texorpdfstring{\(t-\)Test mit unbekannter Varianz}{t-Test mit unbekannter Varianz}}\label{t-test-mit-unbekannter-varianz}}
 
+\hypertarget{theorieteil-1}{%
+\subsubsection{Theorieteil}\label{theorieteil-1}}
+
 \citep{wikipediaT}\\
 Beim zweiseitigen \(t-\)Test mit unbekannter Varianz wird die Nullhypothese \(H_0: \mu = \mu_0\) gegen die Alternative \(H_1: \mu \neq \mu_0\) getestet.
 Als Teststatistik wird \(\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) verwendet.\\
@@ -201,6 +210,9 @@ Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also is
 
 Das heißt für den Test müssen wir nur die Teststatistik \(T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}\) berechnen und anschließend deren \(p\)-Wert bestimmen. Wenn dieser kleiner als \(1-\alpha\) ist,
 wird die Nullhypothese verworfen.
+
+\hypertarget{anwendung-1}{%
+\subsubsection{Anwendung}\label{anwendung-1}}
 
 Test:
 
@@ -317,10 +329,16 @@ Ergebnis: Alles deutet darauf hin, dass die Teststatistik t-verteilt ist.
 \hypertarget{t-test-mit-bekannter-varianz}{%
 \subsection{\texorpdfstring{\(t-\)Test mit bekannter Varianz}{t-Test mit bekannter Varianz}}\label{t-test-mit-bekannter-varianz}}
 
-{[}wikipediaT{]}\\
+\hypertarget{theorieteil-2}{%
+\subsubsection{Theorieteil}\label{theorieteil-2}}
+
+\citep{wikipediaT}
 Genau wie oben, nur dass wir die Varianz nicht schätzen müssen.
 Deshalb ist die Teststatistik \(\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)\).
 Der Rest bleibt gleich:
+
+\hypertarget{anwendung-2}{%
+\subsubsection{Anwendung}\label{anwendung-2}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -426,6 +444,23 @@ Ergebnis: Alles deutet darauf hin, dass die Teststatistik normalverteilt ist.
 
 Lineare Regression mit R
 
+\hypertarget{theorieteil-3}{%
+\subsubsection{Theorieteil}\label{theorieteil-3}}
+
+Ein lineares Modell geht davon aus, dass eine Abhängige Variable (hier der Preis) von einer oder mehreren
+unabhängigen Variablen (hier die Temperatur, der Niederschlag bei der Ernte und der Niederschlag im Winter) +
+einem zufälligen Fehler erzeugt wird. Die lm-Funktion findet die Parameter, die das Modell
+(nach der squared error Methode) am besten beschreiben.\\
+Die Formel für das lineare Modell lautet:
+\[
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \epsilon
+\]
+Die Parameter \(\beta_0, \beta_1, \beta_2, \beta_3\) werden durch die lm-Funktion bestimmt.
+Die Fehlerterm \(\epsilon\) ist normalverteilt mit Erwartungswert 0 und Varianz \(\sigma^2\).
+
+\hypertarget{anwendung-3}{%
+\subsubsection{Anwendung}\label{anwendung-3}}
+
 \hypertarget{daten-einlesen}{%
 \subsection{Daten einlesen}\label{daten-einlesen}}
 
@@ -480,11 +515,6 @@ Lineare Regression mit R
 \hypertarget{lineares-modell-erstellen}{%
 \subsection{Lineares Modell erstellen}\label{lineares-modell-erstellen}}
 
-Ein lineares Modell geht davon aus, dass eine Abhängige Variable (hier der Preis) von einer oder mehreren
-unabhängigen Variablen (hier die Temperatur, der Niederschlag bei der Ernte und der Niederschlag im Winter) +
-einem zufälligen Fehler erzeugt wird. Die lm-Funktion findet die Parameter, die das Modell
-(nach der squared error Methode) am besten beschreiben.
-
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(price }\OperatorTok{~}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{h.rain }\OperatorTok{+}\StringTok{ }\NormalTok{w.rain, }\DataTypeTok{data =}\NormalTok{ data)}
@@ -525,7 +555,8 @@ dass der Preis mit steigendem Niederschlag im Winter steigt.
 \hypertarget{angepasste-werte-berechnen}{%
 \subsection{Angepasste Werte berechnen}\label{angepasste-werte-berechnen}}
 
-Die angepassten Werte können wir mit Hilfe der Hut-Matrix berechnen (siehe Skript 9.11):
+Die angepassten Werte sind die Werte, die das lineare Modell für die Abhängige Variable berechnet.
+Sie können wir mit Hilfe der Hut-Matrix berechnen (siehe Skript 9.11):
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -564,6 +595,9 @@ Die beiden Werte sind annähernd gleich (Unterschiede durch Rundungsfehler), was
 \hypertarget{bestimmtheitsmauxdf}{%
 \subsection{Bestimmtheitsmaß}\label{bestimmtheitsmauxdf}}
 
+Das Bestimmtheitsmaß ist ein Maß für die Güte des linearen Modells und liegt zwischen 0 und 1.
+Es gibt den Anteil der Varianz durch die Regressionsvariablen an der Gesamtvarianz wieder. Grundsätzlich gilt je größer der Wert,
+desto besser ist das Modell.\\
 Berechne das Bestimmtheitsmaß \(R^2\) (Skript 9.16):
 
 \begin{Shaded}
@@ -577,11 +611,11 @@ Berechne das Bestimmtheitsmaß \(R^2\) (Skript 9.16):
 ## [1] "R2 =  0.642088980919609"
 \end{verbatim}
 
-Das Bestimmtheitsmaß ist ein Maß für die Güte des linearen Modells und liegt zwischen 0 und 1.
-Es gibt den Anteil der Varianz durch die Regressionsvariablen an der Gesamtvarianz wieder. Grundsätzlich gilt je größer der Wert,
-desto besser ist das Modell.
+\hypertarget{zufuxe4lliger-fehler}{%
+\subsection{zufälliger Fehler}\label{zufuxe4lliger-fehler}}
 
-Berechne den geschätzten zufälligen Fehler \(\hat\sigma^2\) (Skript 9.2.2):
+Der zufällige Fehler ist normalverteilt mit Erwartungswert 0 und Varianz \(\sigma^2\), in unserer Gleichung oben \(\epsilon\).\\
+Berechne die Varianz des geschätzten zufälligen Fehler \(\hat\sigma^2\) (Skript 9.2.2):
 
 \begin{Shaded}
 \begin{Highlighting}[]

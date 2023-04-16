@@ -22,7 +22,8 @@ Das Skript von [@skript] wurde bei fast allen Aufgaben verwendet.
 
 # Aufagabe 1
 ## $\chi^2$-Anpassungstest
-[@wikipediaChi2] 
+### Theorieteil
+[@wikipediaChi2]  
 
 In der Multinomialverteilung haben wir $4$ Kategorien, welche jeweils Binomial verteilt sind. 
 Für große $n$ ist die Binomialverteilung normalverteilt mit  $\mu = n \cdot p$  und  $\sigma = \sqrt{n \cdot p \cdot (1-p)}$.
@@ -33,6 +34,7 @@ Damit ist die Summe $\sum_{j=1}^4 \dfrac{(a_j-n \cdot p_j)^2}{n \cdot p_j \cdot 
 
 Da die p-Werte der $\chi^2$-Verteilung bekannt sind, kann so ein einfacher Hypothesentest durchgeführt werden:
   
+### Anwendung
 $$\begin{aligned}H_0: p_1 = \frac18, p_2 = \frac14, p_3 = \frac12, p_4 = \frac18  \\
 H_1: p_1 \neq \frac18 \vee p_2 \neq \frac14 \vee p_3 \neq \frac12 \vee p_4 \neq \frac18\end{aligned}$$
 
@@ -67,6 +69,7 @@ Simulieren wir nun den Versuch:
   ```
 
 ## $t-$Test mit unbekannter Varianz
+### Theorieteil
 [@wikipediaT]  
 Beim zweiseitigen $t-$Test mit unbekannter Varianz wird die Nullhypothese $H_0: \mu = \mu_0$ gegen die Alternative $H_1: \mu \neq \mu_0$ getestet.
 Als Teststatistik wird $\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ verwendet.  
@@ -78,6 +81,8 @@ Wir müssen allerdings die Varianz mit der empirischen Varianz ersetzen, also is
 
 Das heißt für den Test müssen wir nur die Teststatistik $T=\dfrac{\sqrt{n}(\bar X_n-\mu_0)}{S_n}$ berechnen und anschließend deren $p$-Wert bestimmen. Wenn dieser kleiner als $1-\alpha$ ist, 
 wird die Nullhypothese verworfen.
+
+### Anwendung
   
 Test:
 ```{r}
@@ -149,10 +154,13 @@ Ergebnis: Alles deutet darauf hin, dass die Teststatistik t-verteilt ist.
 
 
 ## $t-$Test mit bekannter Varianz
-[wikipediaT]  
+### Theorieteil
+[@wikipediaT]
 Genau wie oben, nur dass wir die Varianz nicht schätzen müssen.
 Deshalb ist die Teststatistik $\sqrt{n}\dfrac{\bar X_n-\mu_0}{\sigma}\sim N(0,1)$.
 Der Rest bleibt gleich:
+
+### Anwendung
 
 ```{r}
 set.seed(123)
@@ -211,6 +219,19 @@ Ergebnis: Alles deutet darauf hin, dass die Teststatistik normalverteilt ist.
 # Aufgabe 2
 Lineare Regression mit R
 
+### Theorieteil
+Ein lineares Modell geht davon aus, dass eine Abhängige Variable (hier der Preis) von einer oder mehreren 
+unabhängigen Variablen (hier die Temperatur, der Niederschlag bei der Ernte und der Niederschlag im Winter) + 
+einem zufälligen Fehler erzeugt wird. Die lm-Funktion findet die Parameter, die das Modell 
+(nach der squared error Methode) am besten beschreiben.  
+Die Formel für das lineare Modell lautet:
+$$
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \epsilon
+$$
+Die Parameter $\beta_0, \beta_1, \beta_2, \beta_3$ werden durch die lm-Funktion bestimmt.
+Die Fehlerterm $\epsilon$ ist normalverteilt mit Erwartungswert 0 und Varianz $\sigma^2$.
+
+### Anwendung
 ## Daten einlesen
 ```{r}
 data <- read.table("Datensaetze/wine.txt", header = TRUE)
@@ -221,10 +242,7 @@ head(data)
 summary(data)
 ```
 ## Lineares Modell erstellen
-Ein lineares Modell geht davon aus, dass eine Abhängige Variable (hier der Preis) von einer oder mehreren 
-unabhängigen Variablen (hier die Temperatur, der Niederschlag bei der Ernte und der Niederschlag im Winter) + 
-einem zufälligen Fehler erzeugt wird. Die lm-Funktion findet die Parameter, die das Modell 
-(nach der squared error Methode) am besten beschreiben.
+
 ```{r}
 model <- lm(price ~ temp + h.rain + w.rain, data = data)
 summary(model)
@@ -237,7 +255,8 @@ Der Koeffizient für Niederschlag im Winter hat ein positives Vorzeichen, was be
 dass der Preis mit steigendem Niederschlag im Winter steigt.  
 
 ## Angepasste Werte berechnen
-Die angepassten Werte können wir mit Hilfe der Hut-Matrix berechnen (siehe Skript 9.11):
+Die angepassten Werte sind die Werte, die das lineare Modell für die Abhängige Variable berechnet.
+Sie können wir mit Hilfe der Hut-Matrix berechnen (siehe Skript 9.11):
 ```{r}
 X = matrix(c(rep(1,length(data$temp)),data$temp,data$h.rain,data$w.rain),ncol=4)
 HutMatrix = X%*%solve(t(X)%*%X)%*%t(X)
@@ -255,17 +274,20 @@ if (all((fittedValuesByHand - model$fitted.values)<0.0001)){
 Die beiden Werte sind annähernd gleich (Unterschiede durch Rundungsfehler), was bedeutet, dass die Berechnung der angepassten Werte mit Hilfe der Hut-Matrix korrekt ist.
 
 ## Bestimmtheitsmaß
+Das Bestimmtheitsmaß ist ein Maß für die Güte des linearen Modells und liegt zwischen 0 und 1. 
+Es gibt den Anteil der Varianz durch die Regressionsvariablen an der Gesamtvarianz wieder. Grundsätzlich gilt je größer der Wert, 
+desto besser ist das Modell.  
 Berechne das Bestimmtheitsmaß $R^2$ (Skript 9.16):
 ```{r}
 R2 = 1 - sum((data$price - fittedValuesByHand)^2)/sum((data$price - mean(data$price))^2)
 print(paste("R2 = ", R2))
 ```
-Das Bestimmtheitsmaß ist ein Maß für die Güte des linearen Modells und liegt zwischen 0 und 1. 
-Es gibt den Anteil der Varianz durch die Regressionsvariablen an der Gesamtvarianz wieder. Grundsätzlich gilt je größer der Wert, 
-desto besser ist das Modell.  
   
   
-Berechne den geschätzten zufälligen Fehler $\hat\sigma^2$ (Skript 9.2.2):
+  
+## zufälliger Fehler
+Der zufällige Fehler ist normalverteilt mit Erwartungswert 0 und Varianz $\sigma^2$, in unserer Gleichung oben $\epsilon$.  
+Berechne die Varianz des geschätzten zufälligen Fehler $\hat\sigma^2$ (Skript 9.2.2):
 ```{r}
 sigma.hat.sq = sum((data$price - fittedValuesByHand)^2)/(length(data$price)-4)
 print(paste("sigma.hat= ", sqrt(sigma.hat.sq)))
