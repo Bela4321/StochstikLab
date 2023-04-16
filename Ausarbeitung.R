@@ -2,28 +2,28 @@
 # Aufagabe 1
 ## $\chi^2$-Anpassungstest
 
-  set.seed(123)
-  #Diese Funktion simuliert die Multinomialverteilung und berechnet die Chi2-Teststatistik
-  simulateAnpassungstest <- function(){
-    n <- 1000
-    p <- c(1/8, 1/4, 1/2, 1/8)
-    a <- rmultinom(1, n, p)
-    sum((a - n*p)^2/(n*p))
-  }
+set.seed(123)
+#Diese Funktion simuliert die Multinomialverteilung und berechnet die Chi2-Teststatistik
+simulateAnpassungstest <- function(){
+  n <- 1000
+  p <- c(1/8, 1/4, 1/2, 1/8)
+  a <- rmultinom(1, n, p)
+  sum((a - n*p)^2/(n*p))
+}
   
-  #Wir speichern die Ergebnisse in results
-  results <- c()
-  #Wir berechnen 300-mal die Teststatistik und speichern sie in results
-  for (i in 1:300){
-    results =c(results ,simulateAnpassungstest())
-  }
+#Wir speichern die Ergebnisse in results
+results <- c()
+#Wir berechnen 300-mal die Teststatistik und speichern sie in results
+for (i in 1:300){
+  results =c(results ,simulateAnpassungstest())
+}
 
 
-  #Wir plotten die Verteilung der Teststatistik 
-  #und vergleichen sie mit der Chi2-Verteilung mit 3 Freiheitsgraden
-  hist(results, freq=FALSE, main = "Histogramm der Chi2 Werte", xlab = "Chi2-Wert",
-       ylab = "relative Häufigkeit", ylim = c(0, 0.25))
-  curve(dchisq(x, 3), add = TRUE, col = "red")
+#Wir plotten die Verteilung der Teststatistik 
+#und vergleichen sie mit der Chi2-Verteilung mit 3 Freiheitsgraden
+hist(results, freq=FALSE, main = "Histogramm der Chi2 Werte", xlab = "Chi2-Wert",
+     ylab = "relative Häufigkeit", ylim = c(0, 0.25))
+curve(dchisq(x, 3), add = TRUE, col = "red")
 
 ## $t-$Test mit unbekannter Varianz
 
